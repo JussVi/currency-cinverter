@@ -1,0 +1,19 @@
+.currency-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-style {
+    font-size: 15px;
+    color: gray;
+}
+
+.swap-icon {
+    text-align: center;
+    margin: 0px 15px 0px;
+}
+
+.field-style{
+    width: 100%;
+}

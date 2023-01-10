@@ -1,0 +1,8 @@
+.main-block {
+    margin: 0 auto;
+    width: 400px;
+    border-top: 8px solid rgb(30, 45, 252);
+    box-shadow: 5px;
+    background-color: white;
+    padding: 40px;
+}
