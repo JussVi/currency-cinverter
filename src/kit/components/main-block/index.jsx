@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import HeaderBlock from '../header-block/index.jsx';
 import CurrencySelectGroup from "../currency-select-group/index.jsx";
 import { TextField } from "@mui/material";
-import style from './style.module.css'
+import getSymbolFromCurrency from "currency-symbol-map";
+import style from './style.module.css';
 
-const BASE_URL = 'https://api.apilayer.com/fixer/latest'
+
+const BASE_URL = 'https://api.apilayer.com/fixer/symbols'
 const CONVERT_URL = (from, to, amount) => `https://api.apilayer.com/fixer/convert?to=${to}&from=${from}&amount=${amount}`
 const API_KEY = 'XXIgLmYLiOB7k7Vb8nwtXGDhaXfrAHZH'
 
@@ -17,7 +19,10 @@ const REQUEST_HEADERS = {
 
 function MainBlock() {
   const [input, setInput] = useState('')
-  const [res, setRes] = useState('')
+  const [res, setRes] = useState({
+    amount:'',
+    symbols:''
+  })
   const [rates, setRates] = useState([])
   const [fromRates, setFromRates] = useState(null)
   const [toRates, setToRates] = useState(null)
@@ -40,8 +45,12 @@ function MainBlock() {
 
   const handleClickConvert = async () => {
     try {
-      const res = await fetch(CONVERT_URL(toRates.value, fromRates.value, input))
+      const res = await fetch(CONVERT_URL(fromRates.value, toRates.value, input), REQUEST_HEADERS)
       const data = await res.json()
+      setRes({
+        amount: data.result,
+        symbols: getSymbolFromCurrency(toRates)
+      })
     } catch(e) {
 
     }
@@ -52,7 +61,6 @@ function MainBlock() {
     try {
       const res = await fetch(BASE_URL, REQUEST_HEADERS)
       const data = await res.json()
-      setRes(data.result)
       return data
     } catch (e) {
       console.log(e, 'Error')
@@ -61,19 +69,19 @@ function MainBlock() {
   useEffect(() => {
     (async () => {
       const data = await fetchRates()
-      const rates = Object.keys(data.rates).map(item => ({
+      const rates = Object.keys(data.symbols).map(item => ({
         label: item,
         value: item
       }))
       setRates(rates)
-    })
+    })()
   }, [])
 
   return (
     <div className={style['main-block']}>
       <HeaderBlock />
       <h2 className={style['result-style']}>
-        {res}
+        {res.amount}{res.symbols}
       </h2>
       <TextField 
         type='number' 
